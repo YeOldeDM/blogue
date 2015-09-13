@@ -174,9 +174,14 @@ class System:
 			for x in range(self.width):
 				self.own.worldPosition = [x*S,y*S,0]
 				if self.map[x][y].block:
-					mesh = self.map[x][y].block+str(self.map[x][y].block_index)
-					tile = logic.getCurrentScene().addObject(mesh,self.own)
-					self.map[x][y].block = tile
+					index = self.map[x][y].block_index
+					try:
+						mesh = self.map[x][y].block+str(index)
+						tile = logic.getCurrentScene().addObject(mesh,self.own)
+						self.map[x][y].block = tile
+					except ValueError:
+						raise Exception("**********\nStairs at {} {} are reested! \nCorrect block for index {} not found!\n**********".format(x,y,index))
+						logic.endGame()
 		
 				#draw props
 				if self.map[x][y].prop:
@@ -231,6 +236,7 @@ class System:
 		
 	def check_neighbors(self, x,y):
 		num = 0
+		#check cardinal neighbors
 		if self.isValid(x,y+1):
 			if self.map[x][y+1].block:
 				num += 1
@@ -247,6 +253,7 @@ class System:
 			if self.map[x+1][y].block:
 				num += 1
 		
+		#check diagonals too! Diagonal neighbors = instant fail
 		'''					
 		if self.isValid(x+1,y+1):
 			if self.map[x+1][y+1].block:
