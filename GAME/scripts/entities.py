@@ -4,13 +4,7 @@
 '''
 	things Reference:
 	
-		Thing: Every entity must be a Thing.
-				This is the father object.
-		
-		Life: Any Thing which is 'alive':
-				-has HP. Can lose/raise HP.
-				-can Die
-				-has combat potential. Can perform Attacks
+		Later
 '''
 from .things import Thing, Fighter, BasicMonster, Item
 from .things import Potion_Heal
