@@ -1,2 +1,2 @@
 # blogue
-The blender first-person Roguelite
+The Blender first-person Roguelite
