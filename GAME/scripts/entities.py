@@ -15,7 +15,7 @@ from random import randint as roll
 def Player(own):
 	f = Fighter(HP=200, power=6, defense=1)
 	a = BasicMonster()
-	return Thing(own, "Player", fighter=f, ai=a)
+	return Thing(own, "Jenkins", fighter=f, ai=a)
 
 def Zombie(own,sprite):
 	f = Fighter(HP=roll(15,25), power=6, defense=1)

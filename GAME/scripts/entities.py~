@@ -4,13 +4,7 @@
 '''
 	things Reference:
 	
-		Thing: Every entity must be a Thing.
-				This is the father object.
-		
-		Life: Any Thing which is 'alive':
-				-has HP. Can lose/raise HP.
-				-can Die
-				-has combat potential. Can perform Attacks
+		Later
 '''
 from .things import Thing, Fighter, BasicMonster, Item
 from .things import Potion_Heal
@@ -27,7 +21,6 @@ def Zombie(own,sprite):
 	f = Fighter(HP=roll(15,25), power=6, defense=1)
 	a = BasicMonster()
 	s = Sprite(sprite, 'zombie', active=True, direction=True, loop=True, action='walk')
-	print(s.own)
 	return Thing(own, 'Zombie', sprite=s, fighter=f, ai=a)
 
 def ZombieCorpse(own):

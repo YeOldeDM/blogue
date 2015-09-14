@@ -158,12 +158,12 @@ class Fighter:
 			#self.owner.state = 'dead'
 			print("R.I.P.   {} has died at the hands of {}".format(self.owner.Name, origin.Name))
 			#self.owner.sys['sys'].props.remove(self.owner.own)
-			if self.owner.Name != 'Player':
+			if self.owner.own['thing'] != 'Player':
 				self.owner.own.scene.addObject(self.owner.Name+"_corpse", self.owner.own)
 				self.owner.own.endObject()
 			
 		elif self.HP >= self.maxHP:	self.HP = self.maxHP
-		if self.owner.Name == 'Player':
+		if self.owner.own['thing'] == 'Player':
 			value = self.HP / self.maxHP
 			logic.sendMessage('update_player_hp', str(value))
 		print("{}/{} HP remaining for {}".format(self.HP, self.maxHP, self.owner.Name))
@@ -244,11 +244,11 @@ class Thing:
 		#self.own.applyMovement([0,-(damage),damage*0.5], True)
 		if self.fighter:
 			self.fighter.hurt(damage, origin)
-			if self.ai and self.Name != 'Player':	#specials for non-player AI
+			if self.ai and self.own['thing'] != 'Player':	#specials for non-player AI
 				self.state = 'hurt'	
 				self.ai.last_attacker = origin	#become hostile toward our damage source
 			#extra stuff for player hurting
-			elif self.Name == 'Player':
+			elif self.own['thing'] == 'Player':
 				head = self.own.children['Head']
 				impact = damage / self.fighter.HP
 				head_kick(head,impact)
