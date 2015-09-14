@@ -48,6 +48,9 @@ class BasicMonster:
 		return "AI component of {}".format(self.owner)
 	
 	def think(self):
+		if self.state == 'dead':
+			return
+		
 		if self.state == 'idle':
 			self.owner.sprite.action = 'walk'
 			self.owner.sprite.own['rate'] = 10
@@ -135,7 +138,8 @@ class BasicMonster:
 		wall = self.owner.own.rayCast(vec,self.owner.own, distance,'wall',0,1,0)
 		thing = self.owner.own.rayCast(vec,self.owner.own, distance,'thing', 0,1,0)
 		if thing[0]:
-			return thing[0]
+			if thing[0].state != 'dead':
+				return thing[0]
 		if wall[0]:
 			return wall[0]
 	
@@ -167,8 +171,7 @@ class Fighter:
 			print("R.I.P.   {} has died at the hands of {}".format(self.owner.Name, origin.Name))
 			#self.owner.sys['sys'].props.remove(self.owner.own)
 			if self.owner.own['thing'] != 'Player':
-				self.owner.own.scene.addObject(self.owner.Name+"_corpse", self.owner.own)
-				self.owner.own.endObject()
+				self.owner.kill(origin)
 			
 		elif self.HP >= self.maxHP:	self.HP = self.maxHP
 		if self.owner.own['thing'] == 'Player':
@@ -206,7 +209,7 @@ class Thing:
 		self.sys = own.scene.objects['System']
 		self.Name = Name
 		
-		self.state = 'alive'
+		self.state = 'idle'
 		
 		self.sprite = sprite
 		
@@ -259,3 +262,24 @@ class Thing:
 				head = self.own.children['Head']
 				impact = damage / self.fighter.HP
 				head_kick(head,impact)
+				
+	def kill(self, origin):
+		self.sprite.active = False
+		self.sprite.current_frame = 0		
+		self.item = Item(None)
+		self.item.owner = self
+		
+		self.sprite.action = 'death'
+		
+		self.sprite.own['frames'] = 12
+		self.sprite.own['rate'] = 12
+		self.sprite.direction = None
+		self.sprite.loop = False
+		self.sprite.own['has_face'] = False	#disable direction for death/corpse
+		
+		self.fighter = None
+		self.AI = None
+		
+		self.state = 'dead'
+		
+		

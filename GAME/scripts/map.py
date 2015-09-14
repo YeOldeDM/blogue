@@ -50,15 +50,16 @@ class System:
 		
 		self.generate_map()
 	
+
 	def monster_AI(self):
 		for prop in self.props:
 			if prop.invalid:
 				self.props.remove(prop)
-			elif 'ent' in prop and prop['ent'].state != 'dead' and prop['ent'].ai and prop != self.player:
-				if prop.getDistanceTo(self.player) <= 35.0 and prop['ent'].ai.los_ray(self.player):
-					prop['ent'].ai.think()
-		
-		
+			elif 'ent' in prop:
+				if prop['ent'].ai and prop != self.player:
+					if prop.getDistanceTo(self.player) <= 35.0 and prop['ent'].ai.los_ray(self.player):
+						prop['ent'].ai.think()
+
 		
 	def get_minimap(self):
 		grid = [["X" for x in range(7)] for y in range(7)]
