@@ -18,6 +18,15 @@ def Potion_Heal():
 	target.fighter.hurt(-25)
 	print("HEALED 25")
 
+#placeholder Stairs component
+class Stairs:
+	def __init__(self):
+		pass
+	
+	def __repr__(self):
+		return "STAIRS Component of {}".format(self.owner)
+		
+		
 class Item:
 	def __init__(self,use_effect, owned_by=None):
 		self.use_effect = use_effect
@@ -72,7 +81,6 @@ class BasicMonster:
 				self.ai_timer = 0
 				self.state = 'idle'
 
-				#self.owner.sprite.action = 'walk'
 			
 		elif self.state == 'hurt':
 			self.ai_timer += 1
@@ -124,12 +132,12 @@ class BasicMonster:
 		"""check for objects directly in front of me, up to distance"""
 		vec = (self.owner.own.localOrientation.col[1]*100)+Vector(self.owner.own.worldPosition)
 		#render.drawLine(self.owner.own.worldPosition, vec, [1,0,0])	#test line
-		wall = self.owner.own.rayCastTo(vec,distance,'wall')
-		thing = self.owner.own.rayCastTo(vec,distance,'thing')
-		if thing:
-			return thing
-		if wall:
-			return wall
+		wall = self.owner.own.rayCast(vec,self.owner.own, distance,'wall',0,1,0)
+		thing = self.owner.own.rayCast(vec,self.owner.own, distance,'thing', 0,1,0)
+		if thing[0]:
+			return thing[0]
+		if wall[0]:
+			return wall[0]
 	
 class Fighter:
 	def __init__(self, HP, power, defense):
@@ -173,11 +181,13 @@ class Fighter:
 		d = self.attack_range
 		ray = self.owner.ai.sight_ray(d)
 
-		if ray and 'ent' in ray:
+		if ray and 'ent' in ray and not ray['ent'].stairs:
 			ray['ent'].get_hit(self.owner, self.power)
 			brush = self.owner.own.scene.objects['System']
 			brush.worldPosition = ray.worldPosition
 			brush.worldPosition.z += 1.0
+			
+			#impact blood spray
 			emitter = self.owner.own.scene.addObject('Blood Spray', brush, 2)
 			emitter['impact'] = self.power
 		else:
@@ -190,7 +200,7 @@ class Fighter:
 class Thing:
 	def __init__(self, own, Name, 
 					sprite=None, fighter=None, ai=None,
-					item=None):
+					item=None, stairs=None):
 					
 		self.own = own
 		self.sys = own.scene.objects['System']
@@ -205,18 +215,15 @@ class Thing:
 		
 		self.item = item
 		
-		if self.sprite:
-			self.sprite.owner = self
-			
-		if self.fighter:	
-			self.fighter.owner = self
+		self.stairs = stairs
 		
-		if self.ai:
-			self.ai.owner = self
+		if self.sprite:		self.sprite.owner = self
+		if self.fighter:	self.fighter.owner = self
+		if self.ai:			self.ai.owner = self
+		if self.item:		self.item.owner = self
+		if self.stairs:		self.stairs.owner = self
 		
-		if self.item:
-			self.item.owner = self
-			
+		
 	def __repr__(self):
 		return "THING {} @ x{} y{}".format(self.Name, self.x, self.y)
 	
