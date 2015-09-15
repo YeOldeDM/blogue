@@ -25,7 +25,29 @@ class Rect:
 
 
 
-
+class Clock:
+	def __init__(self):
+		self.raw_time = 0
+		
+	@property
+	def play_time(self):
+		T = self.raw_time//60
+		
+		seconds = T
+		minutes = T//60
+		hours = minutes//60
+		
+		seconds -= minutes*60
+		minutes -= hours*60
+		'''
+		if seconds < 10:
+			seconds = "0"+str(seconds)
+		if minutes < 10:
+			seconds = "0"+str(minutes)
+		if hours < 10:
+			seconds = "0"+str(hours)
+		'''
+		return "{}h {}m {}s".format(hours,minutes,seconds)
 
 class Tile:
 	def __init__(self, block=None):
@@ -45,12 +67,17 @@ class System:
 		
 		self.player = logic.getCurrentScene().objects['Player']
 		
+		self.clock = Clock()
+		
 		self.props = []
-		self.tick = 0
 		
 		self.generate_map()
 	
-
+	def clock_tick(self):
+		self.clock.raw_time += 1
+		logic.globalDict['play_time'] = self.clock.play_time
+		
+		
 	def monster_AI(self):
 		for prop in self.props:
 			if prop.invalid:

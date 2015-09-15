@@ -172,6 +172,8 @@ class Fighter:
 			#self.owner.sys['sys'].props.remove(self.owner.own)
 			if self.owner.own['thing'] != 'Player':
 				self.owner.kill(origin)
+			elif self.owner.own['thing'] == 'Player':
+				self.owner.player_kill(origin)
 			
 		elif self.HP >= self.maxHP:	self.HP = self.maxHP
 		if self.owner.own['thing'] == 'Player':
@@ -283,4 +285,13 @@ class Thing:
 		self.state = 'dead'
 		self.own.scene.objects['System']['sys'].props.remove(self.own)
 		
+	def player_kill(self, origin):
+		#Special case for player death
+		T = logic.globalDict['play_time']
+		origin_name = origin.Name
+		if origin_name == "None":
+			origin_name = "Mysterious Force (probably a bug)"
+		logic.globalDict['epitaph'] = "Here lies {}, slain by a {} after {}".format(self.Name, origin_name, T)
+		logic.sendMessage("PLAYER_DEATH")
+
 		

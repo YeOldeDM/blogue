@@ -5,3 +5,4 @@ from .sprite_wrapper import *
 
 from .rand_title import *
 
+from .settings import *
