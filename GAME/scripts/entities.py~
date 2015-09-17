@@ -34,7 +34,7 @@ def ZombieCorpse(own):
 
 
 def LifePotion(own):
-	i = Item(Potion_Heal)
+	i = Item()
 	return Thing(own, "Life Potion", item=i)
 	
 def StairsDown(own):

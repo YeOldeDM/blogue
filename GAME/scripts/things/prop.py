@@ -3,4 +3,4 @@ class Prop:
 		pass
 	
 	def __repr__(self):
-		return "STAIRS Component of {}".format(self.owner)
+		return "PROP Component of {}".format(self.owner)
