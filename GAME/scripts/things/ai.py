@@ -1,4 +1,6 @@
 from bge import logic
+from random import randint
+from mathutils import Vector
 
 class BasicMonster:
 	
@@ -19,6 +21,7 @@ class BasicMonster:
 		if self.state == 'dead':
 			return
 		
+		#sprite information
 		if self.state == 'idle':
 			self.owner.sprite.action = 'walk'
 			self.owner.sprite.own['rate'] = 10
@@ -34,6 +37,7 @@ class BasicMonster:
 			if self.target == self.owner.own:
 				self.target = None
 		
+		#make the player the target if all else fails
 		if not self.target:
 			self.target = self.owner.sys['sys'].player
 
@@ -77,8 +81,9 @@ class BasicMonster:
 			self.owner.own.worldPosition = new_pos
 		else:
 			if randint(1,10) <= 3 and 'ent' in obstacle:
-				self.target = obstacle
-				self.state = 'attack'
+				if obstacle.fighter:	#only go for fighters
+					self.target = obstacle
+					self.state = 'attack'
 				
 	def face(self, target):
 		"""Turn my object to face its target"""
@@ -91,7 +96,7 @@ class BasicMonster:
 				self.state = 'attack'
 
 	def los_ray(self, other):
-		#check for line of sight to the player
+		#check for line of sight to the other
 		ray = self.owner.own.rayCast(other, self.owner.own, 0, 'wall',0,1,0)
 		for ob in ray:
 			if ob != None:

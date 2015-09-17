@@ -45,7 +45,7 @@ class Fighter:
 		d = self.attack_range
 		ray = self.owner.ai.sight_ray(d)
 
-		if ray and 'ent' in ray and not ray['ent'].stairs:
+		if ray and 'ent' in ray and not ray['ent'].prop:
 			ray['ent'].get_hit(self.owner, self.power)
 			brush = self.owner.own.scene.objects['System']
 			brush.worldPosition = ray.worldPosition

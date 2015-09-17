@@ -1,3 +1,7 @@
+from bge import logic
+from random import randint
+from mathutils import Vector
+
 class BasicMonster:
 	
 	def __init__(self):
@@ -32,6 +36,7 @@ class BasicMonster:
 			if self.target == self.owner.own:
 				self.target = None
 		
+		#make the player the target if all else fails
 		if not self.target:
 			self.target = self.owner.sys['sys'].player
 
@@ -89,7 +94,7 @@ class BasicMonster:
 				self.state = 'attack'
 
 	def los_ray(self, other):
-		#check for line of sight to the player
+		#check for line of sight to the other
 		ray = self.owner.own.rayCast(other, self.owner.own, 0, 'wall',0,1,0)
 		for ob in ray:
 			if ob != None:

@@ -6,8 +6,13 @@
 	
 		Later
 '''
-from .things import Thing, Fighter, BasicMonster, Item, Stairs
-from .things import Potion_Heal
+from .things.fighter import Fighter
+from .things.ai import BasicMonster	#new name!
+from .things.item import Item
+from .things.prop import Prop
+from .things.thing import Thing
+
+#from .things import Potion_Heal
 from .sprite_wrapper import Sprite
 
 from random import randint as roll
@@ -29,13 +34,13 @@ def ZombieCorpse(own):
 
 
 def LifePotion(own):
-	i = Item(Potion_Heal)
+	i = Item()
 	return Thing(own, "Life Potion", item=i)
 	
 def StairsDown(own):
-	s = Stairs()
-	return Thing(own, "Stairs going downward", stairs=s)	
+	p = Prop()
+	return Thing(own, "Stairs going downward", prop=p)	
 	
 def StairsUp(own):
-	s = Stairs()
-	return Thing(own, "Stairs going upward", stairs=s)
+	p = Prop()
+	return Thing(own, "Stairs going upward", prop=p)

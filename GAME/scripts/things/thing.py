@@ -1,13 +1,19 @@
 from bge import logic, render
 from math import pi
 
+#jar the player's head orientation based on impact force
+def head_kick(head, impact):
+	r_z = randint(-10,10)*0.01*(impact)
+	r_x = randint(-10,10)*0.01*(impact)
+	head.parent.applyRotation([0,0,r_z], False)
+	head.applyRotation([r_x,0,0], True)
 
 
 
 class Thing:
 	def __init__(self, own, Name, 
 					sprite=None, fighter=None, ai=None,
-					item=None, stairs=None):
+					item=None, prop=None):
 					
 		self.own = own
 		self.sys = own.scene.objects['System']
@@ -22,13 +28,13 @@ class Thing:
 		
 		self.item = item
 		
-		self.stairs = stairs
+		self.prop = prop
 		
 		if self.sprite:		self.sprite.owner = self
 		if self.fighter:	self.fighter.owner = self
 		if self.ai:			self.ai.owner = self
 		if self.item:		self.item.owner = self
-		if self.stairs:		self.stairs.owner = self
+		if self.prop:		self.prop.owner = self
 		
 		
 	def __repr__(self):
@@ -61,11 +67,13 @@ class Thing:
 			if self.ai and self.own['thing'] != 'Player':	#specials for non-player AI
 				self.state = 'hurt'	
 				self.ai.last_attacker = origin	#become hostile toward our damage source
+			
 			#extra stuff for player hurting
 			elif self.own['thing'] == 'Player':
 				head = self.own.children['Head']
 				impact = damage / self.fighter.HP
 				head_kick(head,impact)
+				
 				
 	def kill(self, origin):
 		self.sprite.active = False
