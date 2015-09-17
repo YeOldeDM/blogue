@@ -1,5 +1,7 @@
 from bge import logic, render
 from math import pi
+from random import randint
+from .item import Item
 
 #jar the player's head orientation based on impact force
 def head_kick(head, impact):
@@ -14,7 +16,7 @@ class Thing:
 	def __init__(self, own, Name, 
 					sprite=None, fighter=None, ai=None,
 					item=None, prop=None):
-					
+							
 		self.own = own
 		self.sys = own.scene.objects['System']
 		self.Name = Name
@@ -35,7 +37,6 @@ class Thing:
 		if self.ai:			self.ai.owner = self
 		if self.item:		self.item.owner = self
 		if self.prop:		self.prop.owner = self
-		
 		
 	def __repr__(self):
 		return "THING {} @ x{} y{}".format(self.Name, self.x, self.y)
@@ -58,8 +59,12 @@ class Thing:
 		return round(self.own.worldPosition.y/4)
 	
 		
-	def get_hit(self, origin, damage):
-		print("{} is hit by {} for {} damage!".format(self.Name, origin.Name, damage))
+	#I get hit by something
+	def get_hit(self, damage, origin=None):
+		origin_name = origin.Name
+		if origin_name == None:
+			origin_name = "A Mysterious Force"
+		print("{} is hit by {} for {} damage!".format(self.Name, origin_name, damage))
 		self.own['sfx_hit'] = True
 		#self.own.applyMovement([0,-(damage),damage*0.5], True)
 		if self.fighter:
@@ -74,7 +79,7 @@ class Thing:
 				impact = damage / self.fighter.HP
 				head_kick(head,impact)
 				
-				
+	#I get killed by something			
 	def kill(self, origin):
 		self.sprite.active = False
 		self.sprite.current_frame = 0		
@@ -94,9 +99,10 @@ class Thing:
 		
 		self.state = 'dead'
 		self.own.scene.objects['System']['sys'].props.remove(self.own)
-		
+	
+	
+	#Special case for player death	
 	def player_kill(self, origin):
-		#Special case for player death
 		T = logic.globalDict['play_time']
 		origin_name = origin.Name
 		if origin_name == "None":

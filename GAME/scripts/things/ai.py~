@@ -21,6 +21,7 @@ class BasicMonster:
 		if self.state == 'dead':
 			return
 		
+		#sprite information
 		if self.state == 'idle':
 			self.owner.sprite.action = 'walk'
 			self.owner.sprite.own['rate'] = 10
@@ -80,8 +81,9 @@ class BasicMonster:
 			self.owner.own.worldPosition = new_pos
 		else:
 			if randint(1,10) <= 3 and 'ent' in obstacle:
-				self.target = obstacle
-				self.state = 'attack'
+				if obstacle.fighter:	#only go for fighters
+					self.target = obstacle
+					self.state = 'attack'
 				
 	def face(self, target):
 		"""Turn my object to face its target"""

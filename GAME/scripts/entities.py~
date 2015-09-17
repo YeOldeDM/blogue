@@ -1,11 +1,7 @@
 #	Factories for creating Entities
 #
 #
-'''
-	things Reference:
-	
-		Later
-'''
+
 from .things.fighter import Fighter
 from .things.ai import BasicMonster	#new name!
 from .things.item import Item

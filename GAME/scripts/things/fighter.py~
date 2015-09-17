@@ -9,6 +9,7 @@ class Fighter:
 		self.power = power
 		self.defense  = defense
 		
+		#All this needs to be getted from __init__
 		self.turn_rate = 0.08
 		self.move_speed = 0.3
 		self.attack_range = 3.0
@@ -19,7 +20,9 @@ class Fighter:
 
 	def __repr__(self):
 		return "FIGHTER component of {}".format(self.owner)
-			
+	
+	
+	#Lost Life points from an origin		
 	def hurt(self, damage, origin=None):
 		if origin == None:
 			origin = self.owner
@@ -40,19 +43,25 @@ class Fighter:
 			logic.sendMessage('update_player_hp', str(value))
 		print("{}/{} HP remaining for {}".format(self.HP, self.maxHP, self.owner.Name))
 			
-
+	
+	#Attempt a melee attack
 	def attack(self):
 		d = self.attack_range
 		ray = self.owner.ai.sight_ray(d)
 
-		if ray and 'ent' in ray and not ray['ent'].stairs:
-			ray['ent'].get_hit(self.owner, self.power)
+		if ray and 'ent' in ray and not ray['ent'].prop:
+			#################################
+			#	Combat mechanics go here!	#
+			#################################
+			ray['ent'].get_hit(self.power, self.owner)	#Deal damage to the target
+			
+			#impact blood spray
 			brush = self.owner.own.scene.objects['System']
 			brush.worldPosition = ray.worldPosition
 			brush.worldPosition.z += 1.0
-			
-			#impact blood spray
 			emitter = self.owner.own.scene.addObject('Blood Spray', brush, 2)
 			emitter['impact'] = self.power
+		
+		#Attacked, but no target..
 		else:
 			print("{} swings at the air!".format(self.owner.Name))
