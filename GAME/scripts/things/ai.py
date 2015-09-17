@@ -83,7 +83,7 @@ class BasicMonster:
 			self.owner.own.worldPosition = new_pos
 		else:
 			if randint(1,10) <= 3 and 'ent' in obstacle:
-				if obstacle.fighter:	#only go for fighters
+				if hasattr(obstacle,'fighter'):	#only go for fighters
 					self.target = obstacle
 					self.state = 'attack'
 				

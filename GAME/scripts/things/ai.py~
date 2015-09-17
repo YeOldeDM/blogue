@@ -17,6 +17,8 @@ class BasicMonster:
 	def __repr__(self):
 		return "AI component of {}".format(self.owner)
 	
+	
+	#General thinking loop
 	def think(self):
 		if self.state == 'dead':
 			return
@@ -67,7 +69,7 @@ class BasicMonster:
 	
 
 
-					
+	#Hook to fighter's attack method				
 	def fight(self):
 		self.owner.fighter.attack()
 

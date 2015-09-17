@@ -14,7 +14,7 @@ from .sprite_wrapper import Sprite
 from random import randint as roll
 
 def Player(own):
-	f = Fighter(HP=20, power=6, defense=1)
+	f = Fighter(HP=100, power=6, defense=1)
 	a = BasicMonster()
 	return Thing(own, "Jenkins", fighter=f, ai=a)
 

@@ -39,11 +39,22 @@ class Fighter:
 			
 		elif self.HP >= self.maxHP:	self.HP = self.maxHP
 		if self.owner.own['thing'] == 'Player':
-			value = self.HP / self.maxHP
-			logic.sendMessage('update_player_hp', str(value))
+			self.announce_life()
 		print("{}/{} HP remaining for {}".format(self.HP, self.maxHP, self.owner.Name))
 			
-	
+	def heal(self, amt):
+		self.HP += amt
+		if self.HP >= self.maxHP:	
+			self.HP = self.maxHP
+		
+		if self.owner.own['thing'] == 'Player':
+			self.annouce_life()
+		
+	def announce_life(self):
+		value = self.HP / self.maxHP
+		logic.sendMessage('update_player_hp', str(value))
+		logic.sendMessage('hp_number', str(self.HP))
+		
 	#Attempt a melee attack
 	def attack(self):
 		d = self.attack_range
