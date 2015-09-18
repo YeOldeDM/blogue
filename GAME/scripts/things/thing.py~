@@ -1,6 +1,7 @@
 from bge import logic, render
 from math import pi
 from random import randint
+from .item import Item
 
 #jar the player's head orientation based on impact force
 def head_kick(head, impact):
@@ -97,7 +98,9 @@ class Thing:
 		self.AI = None
 		
 		self.state = 'dead'
-		self.own.scene.objects['System']['sys'].props.remove(self.own)
+		self.sys['sys'].world.monsters.remove(self.own)
+		self.sys['sys'].world.corpses.append(self.own)
+		self.own.collisionGroup = 2
 	
 	
 	#Special case for player death	

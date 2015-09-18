@@ -94,11 +94,14 @@ class Thing:
 		self.sprite.loop = False
 		self.sprite.own['has_face'] = False	#disable direction for death/corpse
 		
+		self.Name += " Corpse"
 		self.fighter = None
 		self.AI = None
 		
 		self.state = 'dead'
-		self.own.scene.objects['System']['sys'].props.remove(self.own)
+		self.sys['sys'].world.monsters.remove(self.own)
+		self.sys['sys'].world.corpses.append(self.own)
+		self.own.collisionGroup = 2
 	
 	
 	#Special case for player death	

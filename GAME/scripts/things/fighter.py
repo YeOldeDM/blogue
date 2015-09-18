@@ -60,18 +60,19 @@ class Fighter:
 		d = self.attack_range
 		ray = self.owner.ai.sight_ray(d)
 
-		if ray and 'ent' in ray and not ray['ent'].prop:
-			#################################
-			#	Combat mechanics go here!	#
-			#################################
-			ray['ent'].get_hit(self.power, self.owner)	#Deal damage to the target
+		if ray and 'ent' in ray:
+			if hasattr(ray['ent'], 'fighter') and ray['ent'].fighter:
+				#################################
+				#	Combat mechanics go here!	#
+				#################################
+				ray['ent'].get_hit(self.power, self.owner)	#Deal damage to the target
 			
-			#impact blood spray
-			brush = self.owner.own.scene.objects['System']
-			brush.worldPosition = ray.worldPosition
-			brush.worldPosition.z += 1.0
-			emitter = self.owner.own.scene.addObject('Blood Spray', brush, 2)
-			emitter['impact'] = self.power
+				#impact blood spray
+				brush = self.owner.own.scene.objects['System']
+				brush.worldPosition = ray.worldPosition
+				brush.worldPosition.z += 1.0
+				emitter = self.owner.own.scene.addObject('Blood Spray', brush, 2)
+				emitter['impact'] = self.power
 		
 		#Attacked, but no target..
 		else:

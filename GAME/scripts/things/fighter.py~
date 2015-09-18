@@ -48,7 +48,7 @@ class Fighter:
 			self.HP = self.maxHP
 		
 		if self.owner.own['thing'] == 'Player':
-			self.annouce_life()
+			self.announce_life()
 		
 	def announce_life(self):
 		value = self.HP / self.maxHP
@@ -60,7 +60,8 @@ class Fighter:
 		d = self.attack_range
 		ray = self.owner.ai.sight_ray(d)
 
-		if ray and 'ent' in ray and not ray['ent'].prop:
+		if ray and 'ent' in ray:
+			if hasattr(ray['ent'], 'fighter') and ray['ent'].fighter:
 			#################################
 			#	Combat mechanics go here!	#
 			#################################

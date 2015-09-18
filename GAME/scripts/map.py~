@@ -24,30 +24,6 @@ class Rect:
 				self.y1 <= other.y2 and self.y2 >= other.y1)
 
 
-
-class Clock:
-	def __init__(self):
-		self.raw_time = 0
-		
-	@property
-	def play_time(self):
-		T = self.raw_time//60
-		
-		seconds = T
-		minutes = T//60
-		hours = minutes//60
-		
-		seconds -= minutes*60
-		minutes -= hours*60
-		
-		if seconds < 10:
-			seconds = "0"+str(seconds)
-		if minutes < 10:
-			seconds = "0"+str(minutes)
-		if hours < 10:
-			seconds = "0"+str(hours)
-		return "{}h {}m {}s".format(hours,minutes,seconds)
-
 class Tile:
 	def __init__(self, block=None):
 		self.block = block
@@ -55,57 +31,27 @@ class Tile:
 		self.prop = None
 		
 		self.explored = False	#has the player set foot on this tile yet?
+
+
+
+class Dungeon:
+	def __init__(self, sys, width, height):
+		self.sys = sys
+		self.width = width
+		self.height = height
 		
-class System:	
-	def __init__(self, own, WIDTH, HEIGHT):
-		self.own = own
-		self.width = WIDTH
-		self.height = HEIGHT
 		
-		self.map = self.make_map()
-		
-		self.player = logic.getCurrentScene().objects['Player']
-		
-		self.clock = Clock()
+		self.maps = [self.make_map()]
+		self.map = self.maps[0]
 		
 		self.props = []
+		self.items = []
+		self.monsters = []
+		self.corpses = []
 		
 		self.generate_map()
-	
-	def clock_tick(self):
-		self.clock.raw_time += 1
-		logic.globalDict['play_time'] = self.clock.play_time
 		
 		
-	def monster_AI(self):
-		for prop in self.props:
-			if prop.invalid:
-				self.props.remove(prop)
-			elif 'ent' in prop:
-				if prop['ent'].ai and prop != self.player:
-					if prop.getDistanceTo(self.player) <= 35.0 and prop['ent'].ai.los_ray(self.player):
-						prop['ent'].ai.think()
-
-		
-	def get_minimap(self):
-		grid = [["X" for x in range(7)] for y in range(7)]
-		
-		cx = self.player['ent'].x
-		cy = self.player['ent'].y
-		if not self.map[cx][cy].explored:
-			self.map[cx][cy].explored = True
-			
-		for y in range(7):
-			for x in range(7):
-				mx = (cx - 3)+x
-				my = (cy - 3)+y
-				if 0 <= mx <= self.width-1 and 0 <= my <= self.height-1:
-					if self.map[mx][my].block:
-						grid[x][y] = "O"
-						if self.map[mx][my].explored:
-							grid[x][y] = "E"
-		logic.globalDict['minimap_grid'] = grid
-			
 	def make_map(self):
 		return [[Tile()
 				for y in range(self.height) ]
@@ -147,7 +93,7 @@ class System:
 				if num_rooms == 0:
 					#place player here
 					center = new_room.center()
-					self.player.worldPosition = [center[0]*S, center[1]*S, (PLAYER_HEIGHT/2)+0.05]
+					self.sys.player.worldPosition = [center[0]*S, center[1]*S, (PLAYER_HEIGHT/2)+0.05]
 				#connect this room with the previous room
 				else:
 					(prev_x, prev_y) = rooms[num_rooms-1].center()
@@ -199,12 +145,12 @@ class System:
 	def draw_map(self):
 		for y in range(self.height):
 			for x in range(self.width):
-				self.own.worldPosition = [x*S,y*S,0]
+				self.sys.own.worldPosition = [x*S,y*S,0]
 				if self.map[x][y].block:
 					index = self.map[x][y].block_index
 					try:
 						mesh = self.map[x][y].block+str(index)
-						tile = logic.getCurrentScene().addObject(mesh,self.own)
+						tile = logic.getCurrentScene().addObject(mesh,self.sys.own)
 						self.map[x][y].block = tile
 					except ValueError:
 						raise Exception("**********\nStairs at {} {} are reested! \nCorrect block for index {} not found!\n**********".format(x,y,index))
@@ -213,15 +159,17 @@ class System:
 				#draw props
 				if self.map[x][y].prop:
 					p = self.map[x][y].prop
-					self.own.worldPosition = [(x*S)+rand(-1,1),(y*S)+rand(-1,1), 2]
+					self.sys.own.worldPosition = [(x*S)+rand(-1,1),(y*S)+rand(-1,1), 2]
 					if p == 'LifePotion':
-						self.own.worldPosition.z = 0
-					prop = logic.getCurrentScene().addObject(p, self.own)
-					
+						self.sys.own.worldPosition.z = 0
+					prop = logic.getCurrentScene().addObject(p, self.sys.own)
 					ori = prop.worldOrientation.to_euler()
 					ori.z = rand(0,628)*0.01
 					prop.worldOrientation = ori
-					self.props.append(prop)
+					if p == 'Zombie':
+						self.monsters.append(prop)
+					elif p == 'LifePotion':
+						self.items.append(prop)
 	
 	def find_block_index(self, x, y):
 		#Look to our neighbors, and define a bitfield?
