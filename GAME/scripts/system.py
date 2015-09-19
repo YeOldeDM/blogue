@@ -57,17 +57,17 @@ class System:
 		
 		cx = self.player['ent'].x
 		cy = self.player['ent'].y
-		if not self.map[cx][cy].explored:
-			self.map[cx][cy].explored = True
+		if not self.world.map[cx][cy].explored:
+			self.world.map[cx][cy].explored = True
 			
 		for y in range(7):
 			for x in range(7):
 				mx = (cx - 3)+x
 				my = (cy - 3)+y
 				if 0 <= mx <= self.width-1 and 0 <= my <= self.height-1:
-					if self.map[mx][my].block:
+					if self.world.map[mx][my].block:
 						grid[x][y] = "O"
-						if self.map[mx][my].explored:
+						if self.world.map[mx][my].explored:
 							grid[x][y] = "E"
 		logic.globalDict['minimap_grid'] = grid
 		
