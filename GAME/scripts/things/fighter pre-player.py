@@ -29,18 +29,31 @@ class Fighter:
 		self.HP -= damage
 		
 		if self.HP <= 0:
+			#self.owner.state = 'dead'
 			print("R.I.P.   {} has died at the hands of {}".format(self.owner.Name, origin.Name))
-			self.owner.kill(origin)
-
-		elif self.HP >= self.maxHP:	self.HP = self.maxHP
-		print("{}/{} HP remaining for {}".format(self.HP, self.maxHP, self.owner.Name))
+			#self.owner.sys['sys'].props.remove(self.owner.own)
+			if self.owner.own['thing'] != 'Player':
+				self.owner.kill(origin)
+			elif self.owner.own['thing'] == 'Player':
+				self.owner.player_kill(origin)
 			
+		elif self.HP >= self.maxHP:	self.HP = self.maxHP
+		if self.owner.own['thing'] == 'Player':
+			self.announce_life()
+		print("{}/{} HP remaining for {}".format(self.HP, self.maxHP, self.owner.Name))
 			
 	def heal(self, amt):
 		self.HP += amt
 		if self.HP >= self.maxHP:	
 			self.HP = self.maxHP
-
+		
+		if self.owner.own['thing'] == 'Player':
+			self.announce_life()
+		
+	def announce_life(self):
+		value = self.HP / self.maxHP
+		logic.sendMessage('update_player_hp', str(value))
+		logic.sendMessage('hp_number', str(self.HP))
 		
 	#Attempt a melee attack
 	def attack(self):
@@ -101,11 +114,15 @@ class PlayerFighter:
 		if self.HP <= 0:
 			#self.owner.state = 'dead'
 			print("R.I.P.   {} has died at the hands of {}".format(self.owner.Name, origin.Name))
-			self.owner.player_kill(origin)
+			#self.owner.sys['sys'].props.remove(self.owner.own)
+			if self.owner.own['thing'] != 'Player':
+				self.owner.kill(origin)
+			elif self.owner.own['thing'] == 'Player':
+				self.owner.player_kill(origin)
 			
 		elif self.HP >= self.maxHP:	self.HP = self.maxHP
-
-		self.announce_life()
+		if self.owner.own['thing'] == 'Player':
+			self.announce_life()
 		print("{}/{} HP remaining for {}".format(self.HP, self.maxHP, self.owner.Name))
 			
 	def heal(self, amt):
@@ -113,9 +130,9 @@ class PlayerFighter:
 		if self.HP >= self.maxHP:	
 			self.HP = self.maxHP
 		
-		self.announce_life()
+		if self.owner.own['thing'] == 'Player':
+			self.announce_life()
 		
-	#send our Life info to the HUD for display	
 	def announce_life(self):
 		value = self.HP / self.maxHP
 		logic.sendMessage('update_player_hp', str(value))
