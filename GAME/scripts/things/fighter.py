@@ -2,6 +2,16 @@ from bge import logic
 from random import randint
 
 
+
+def find_xp_for_level(L):
+	M = 50
+	N = 100		#this is the XP curve for Zodiac FFRPG!
+	if L == 1:
+		return 0
+	else:
+		return XP_to_lvl(L-1) + M + (N*(L-2))
+		
+
 class Fighter:
 	def __init__(self, HP, power, defense):
 		self.maxHP = HP
@@ -74,6 +84,9 @@ class Fighter:
 
 class PlayerFighter:
 	def __init__(self, HP, power, defense):
+		self.level = 1
+		self.xp = 0
+		
 		self.maxHP = HP
 		self.HP = HP
 		self.power = power
@@ -87,7 +100,11 @@ class PlayerFighter:
 		self.attack_counter = self.attack_rate
 		
 		self.target = None
-
+	
+	@property
+	def xp_to_next(self):
+		return find_xp_for_level(self.level + 1)
+	
 	def __repr__(self):
 		return "PLAYER-FIGHTER component of {}".format(self.owner)
 	
@@ -114,6 +131,15 @@ class PlayerFighter:
 			self.HP = self.maxHP
 		
 		self.announce_life()
+	
+	#Player gains XP points, maybe levels up
+	def gain_xp(self, amt):
+		self.xp += amt
+		if self.xp >= self.xp_to_next:
+			self.level += 1
+			logic.sendMessage('update_level_number', str(self.level))
+		value = find_xp_for_level(self.level) / find_xp_for_level(self.level+1)
+		logic.sendMessage('update_player_xp', str(value))
 		
 	#send our Life info to the HUD for display	
 	def announce_life(self):
@@ -143,3 +169,6 @@ class PlayerFighter:
 		#Attacked, but no target..
 		else:
 			print("{} swings at the air!".format(self.owner.Name))
+			
+			
+
