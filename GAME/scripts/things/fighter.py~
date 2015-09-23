@@ -9,7 +9,7 @@ def find_xp_for_level(L):
 	if L == 1:
 		return 0
 	else:
-		return XP_to_lvl(L-1) + M + (N*(L-2))
+		return find_xp_for_level(L-1) + M + (N*(L-2))
 		
 
 class Fighter:
@@ -18,6 +18,9 @@ class Fighter:
 		self.HP = HP
 		self.power = power
 		self.defense  = defense
+		
+		
+		self.xp_value = 30
 		
 		#All this needs to be getted from __init__
 		self.turn_rate = 0.08
@@ -41,6 +44,9 @@ class Fighter:
 		if self.HP <= 0:
 			print("R.I.P.   {} has died at the hands of {}".format(self.owner.Name, origin.Name))
 			self.owner.kill(origin)
+			if origin.own == self.owner.sys['sys'].player:
+				print("You gained {} XP".format(self.xp_value))
+				self.owner.sys['sys'].player['ent'].fighter.gain_xp(self.xp_value)
 
 		elif self.HP >= self.maxHP:	self.HP = self.maxHP
 		print("{}/{} HP remaining for {}".format(self.HP, self.maxHP, self.owner.Name))
@@ -100,7 +106,8 @@ class PlayerFighter:
 		self.attack_counter = self.attack_rate
 		
 		self.target = None
-	
+		
+		logic.sendMessage('update_player_xp', '0.0')
 	@property
 	def xp_to_next(self):
 		return find_xp_for_level(self.level + 1)
@@ -137,8 +144,15 @@ class PlayerFighter:
 		self.xp += amt
 		if self.xp >= self.xp_to_next:
 			self.level += 1
-			logic.sendMessage('update_level_number', str(self.level))
-		value = find_xp_for_level(self.level) / find_xp_for_level(self.level+1)
+			logic.sendMessage('player_level_number', str(self.level))
+			print("\nWelcome to Lvl {}!\n".format(self.level))
+		
+		#%progress to next lvl
+		last_lvl = find_xp_for_level(self.level)
+		A = self.xp - last_lvl
+		B = find_xp_for_level(self.level+1) - last_lvl
+		value = A / B
+		
 		logic.sendMessage('update_player_xp', str(value))
 		
 	#send our Life info to the HUD for display	
