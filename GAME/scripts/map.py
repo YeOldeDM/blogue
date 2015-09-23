@@ -1,5 +1,6 @@
 from bge import types, logic
 from random import randint as rand
+from random import seed
 from random import choice
 
 S = 4					#Dungeon tile scale
@@ -35,10 +36,11 @@ class Tile:
 
 
 class Dungeon:
-	def __init__(self, sys, width, height):
+	def __init__(self, sys):
 		self.sys = sys
-		self.width = width
-		self.height = height
+		self.width = self.sys.settings.size
+		self.height = self.sys.settings.size
+		self.seed = self.sys.settings.seed
 		
 		
 		self.maps = [self.make_map()]
@@ -59,6 +61,9 @@ class Dungeon:
 	
 	def generate_map(self):
 		
+		seed(self.seed)
+		
+		print("\nGenerating map {} x {}\nSeed: {}\n".format(self.width, self.height, self.seed))
 		#room size and number limits
 		ROOM_MAX_SIZE = 5
 		ROOM_MIN_SIZE = 3
@@ -139,7 +144,10 @@ class Dungeon:
 					self.map[x][y].block_index = self.find_block_index(x,y)
 		
 		#blit those blocks!
+		seed(None)
 		self.draw_map()
+		
+		
 	
 					
 	def draw_map(self):

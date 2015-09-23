@@ -26,14 +26,14 @@ class Clock:
 		return "{}h {}m {}s".format(hours,minutes,seconds)
 
 class System:	
-	def __init__(self, own, WIDTH, HEIGHT):
+	def __init__(self, own):
 		self.own = own
-		self.width = WIDTH
-		self.height = HEIGHT
 		
-		self.player = logic.getCurrentScene().objects['Player']
+		self.settings = logic.globalDict['settings']
 		
-		self.world = Dungeon(self, self.width, self.height)
+		self.player = own.scene.objects['Player']
+		
+		self.world = Dungeon(self)
 		
 		self.clock = Clock()
 	

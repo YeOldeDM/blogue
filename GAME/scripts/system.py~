@@ -26,14 +26,14 @@ class Clock:
 		return "{}h {}m {}s".format(hours,minutes,seconds)
 
 class System:	
-	def __init__(self, own, WIDTH, HEIGHT):
+	def __init__(self, own):
 		self.own = own
-		self.width = WIDTH
-		self.height = HEIGHT
 		
-		self.player = logic.getCurrentScene().objects['Player']
+		self.settings = logic.globalDict['settings']
 		
-		self.world = Dungeon(self, self.width, self.height)
+		self.player = own.scene.objects['Player']
+		
+		self.world = Dungeon(self, self.settings.size, self.settings.size)
 		
 		self.clock = Clock()
 	
@@ -57,8 +57,8 @@ class System:
 		
 		cx = self.player['ent'].x
 		cy = self.player['ent'].y
-		if not self.map[cx][cy].explored:
-			self.map[cx][cy].explored = True
+		if not self.world.map[cx][cy].explored:
+			self.world.map[cx][cy].explored = True
 			
 		for y in range(7):
 			for x in range(7):

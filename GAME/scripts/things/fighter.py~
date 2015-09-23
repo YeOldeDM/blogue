@@ -1,7 +1,11 @@
 from bge import logic
 from random import randint
 
-
+def roll_hitDice(n):
+	result = 0
+	for i in range(n):
+		result += randint(1,8)
+	return result
 
 def find_xp_for_level(L):
 	M = 50
@@ -13,14 +17,17 @@ def find_xp_for_level(L):
 		
 
 class Fighter:
-	def __init__(self, HP, power, defense):
+	def __init__(self, hitDice, damage=(1,8), armor=2):
+		self.hitDice = hitDice
+		HP = roll_hitDice(hitDice)
 		self.maxHP = HP
 		self.HP = HP
-		self.power = power
-		self.defense  = defense
+		self.damage = damage
+		self.damage_bonus = 0
+		self.armor  = armor
 		
 		
-		self.xp_value = 30
+		self.xp_value = 3
 		
 		#All this needs to be getted from __init__
 		self.turn_rate = 0.08
@@ -39,7 +46,7 @@ class Fighter:
 	def hurt(self, damage, origin=None):
 		if origin == None:
 			origin = self.owner
-		self.HP -= damage
+		self.HP -= max(0, randint(1,self.armor))
 		
 		if self.HP <= 0:
 			print("R.I.P.   {} has died at the hands of {}".format(self.owner.Name, origin.Name))
@@ -68,14 +75,15 @@ class Fighter:
 				#################################
 				#	Combat mechanics go here!	#
 				#################################
-				ray['ent'].get_hit(self.power, self.owner)	#Deal damage to the target
+				damage = randint(self.damage[0],self.damage[1])+self.damage_bonus
+				ray['ent'].get_hit(damage, self.owner)	#Deal damage to the target
 			
 				#impact blood spray
 				brush = self.owner.own.scene.objects['System']
 				brush.worldPosition = ray.worldPosition
 				brush.worldPosition.z += 1.0
 				emitter = self.owner.own.scene.addObject('Blood Spray', brush, 2)
-				emitter['impact'] = self.power
+				emitter['impact'] = damage
 		
 		#Attacked, but no target..
 		else:
@@ -89,14 +97,20 @@ class Fighter:
 			
 
 class PlayerFighter:
-	def __init__(self, HP, power, defense):
-		self.level = 1
-		self.xp = 0
+	def __init__(self, level, xp, strength, agility, vitality, magic,
+					HP):
+		self.level = level
+		self.xp = xp
+		
+		self.strength = strength
+		self.agility = agility
+		self.vitality = vitality
+		self.magic = magic
 		
 		self.maxHP = HP
 		self.HP = HP
-		self.power = power
-		self.defense  = defense
+		
+		self.armor = 4
 		
 		#All this needs to be getted from __init__
 		self.turn_rate = 0.08
@@ -108,6 +122,11 @@ class PlayerFighter:
 		self.target = None
 		
 		logic.sendMessage('update_player_xp', '0.0')
+		
+	@property
+	def damage(self):
+		return randint(1,8)+(self.strength//3)
+		
 	@property
 	def xp_to_next(self):
 		return find_xp_for_level(self.level + 1)
@@ -120,7 +139,7 @@ class PlayerFighter:
 	def hurt(self, damage, origin=None):
 		if origin == None:
 			origin = self.owner
-		self.HP -= damage
+		self.HP -= max(0, damage-randint(1, self.armor))
 		
 		if self.HP <= 0:
 			#self.owner.state = 'dead'
@@ -171,7 +190,7 @@ class PlayerFighter:
 				#################################
 				#	Combat mechanics go here!	#
 				#################################
-				ray['ent'].get_hit(self.power, self.owner)	#Deal damage to the target
+				ray['ent'].get_hit(self.damage, self.owner)	#Deal damage to the target
 			
 				#impact blood spray
 				brush = self.owner.own.scene.objects['System']
