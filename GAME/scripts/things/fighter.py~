@@ -190,14 +190,15 @@ class PlayerFighter:
 				#################################
 				#	Combat mechanics go here!	#
 				#################################
-				ray['ent'].get_hit(self.damage, self.owner)	#Deal damage to the target
+				damage = self.damage
+				ray['ent'].get_hit(damage, self.owner)	#Deal damage to the target
 			
 				#impact blood spray
 				brush = self.owner.own.scene.objects['System']
 				brush.worldPosition = ray.worldPosition
 				brush.worldPosition.z += 1.0
 				emitter = self.owner.own.scene.addObject('Blood Spray', brush, 2)
-				emitter['impact'] = self.power
+				emitter['impact'] = damage
 		
 		#Attacked, but no target..
 		else:

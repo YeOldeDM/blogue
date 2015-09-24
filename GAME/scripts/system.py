@@ -64,7 +64,7 @@ class System:
 			for x in range(7):
 				mx = (cx - 3)+x
 				my = (cy - 3)+y
-				if 0 <= mx <= self.width-1 and 0 <= my <= self.height-1:
+				if 0 <= mx <= self.world.width-1 and 0 <= my <= self.world.height-1:
 					if self.world.map[mx][my].block:
 						grid[x][y] = "O"
 						if self.world.map[mx][my].explored:

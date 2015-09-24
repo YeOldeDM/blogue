@@ -25,7 +25,7 @@ def Player(own):
 
 
 def Zombie(own,sprite):
-	f = Fighter(hitDice=1, damage=(1,10), defense=3)
+	f = Fighter(hitDice=1, damage=(1,10), armor=3)
 	a = BasicMonster()
 	s = Sprite(sprite, 'zombie', active=True, direction=True, loop=True, action='walk')
 	return Thing(own, 'Zombie', sprite=s, fighter=f, ai=a)

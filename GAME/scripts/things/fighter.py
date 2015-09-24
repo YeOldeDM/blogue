@@ -27,7 +27,7 @@ class Fighter:
 		self.armor  = armor
 		
 		
-		self.xp_value = 3
+		self.xp_value = 25
 		
 		#All this needs to be getted from __init__
 		self.turn_rate = 0.08
