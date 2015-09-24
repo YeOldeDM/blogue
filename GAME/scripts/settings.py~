@@ -17,3 +17,6 @@ class Settings:
 			'menu':		(130, 'ESCKEY', True),
 			'F1':		(162, 'F1KEY', True)
 			}
+			
+		self.size = 0
+		self.seed = None

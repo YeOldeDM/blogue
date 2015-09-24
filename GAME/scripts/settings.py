@@ -18,5 +18,5 @@ class Settings:
 			'F1':		(162, 'F1KEY', True)
 			}
 			
-		self.size = 0
+		self.size = 20
 		self.seed = None
