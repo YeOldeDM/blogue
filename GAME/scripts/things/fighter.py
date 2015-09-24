@@ -1,5 +1,5 @@
 from bge import logic
-from random import randint
+from random import randint, choice
 
 def roll_hitDice(n):
 	result = 0
@@ -92,7 +92,19 @@ class Fighter:
 			
 			
 			
-			
+def announce_stats():
+	player = logic.getCurrentScene().objects['System']['sys'].player['ent']
+	xp = str(player.fighter.xp)
+	strength = str(player.fighter.strength)
+	agi = str(player.fighter.agility)
+	vit = str(player.fighter.vitality)
+	mag = str(player.fighter.magic)
+	
+	logic.sendMessage('show_xp', xp)
+	logic.sendMessage('show_str', strength)
+	logic.sendMessage('show_agi', agi)
+	logic.sendMessage('show_vit', vit)
+	logic.sendMessage('show_mag', mag)			
 			
 			
 
@@ -107,7 +119,6 @@ class PlayerFighter:
 		self.vitality = vitality
 		self.magic = magic
 		
-		self.maxHP = HP
 		self.HP = HP
 		
 		self.armor = 4
@@ -123,6 +134,12 @@ class PlayerFighter:
 		
 		logic.sendMessage('update_player_xp', '0.0')
 		
+	@property
+	def maxHP(self):
+		lvl_bonus = self.level * 4
+		vit_bonus = self.vitality*3
+		return lvl_bonus + vit_bonus
+			
 	@property
 	def damage(self):
 		return randint(1,8)+(self.strength//3)
@@ -165,7 +182,19 @@ class PlayerFighter:
 			self.level += 1
 			logic.sendMessage('player_level_number', str(self.level))
 			print("\nWelcome to Lvl {}!\n".format(self.level))
-		
+			for i in range(3):
+				stat = randint(0,3)
+				if stat == 0:
+					self.strength += 1
+				elif stat == 1:
+					self.agility += 1
+				elif stat == 2:
+					self.vitality += 1
+				elif stat == 3:
+					self.magic += 1
+
+			announce_stats()
+			
 		#%progress to next lvl
 		last_lvl = find_xp_for_level(self.level)
 		A = self.xp - last_lvl
